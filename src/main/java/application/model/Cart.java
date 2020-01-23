@@ -1,27 +1,31 @@
 package application.model;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static application.dao.SqlConstants.*;
+
 public class Cart {
-    private Integer id;
+    @NotNull
     private Integer userId;
+
+    @NotNull
     private Integer productId;
+
+    @NotNull
+    @Min(1)
     private Integer quantity;
+
     public Cart(){
 
     }
 
-    public Cart(int id, int userId, int productId, int quantity) {
-        this.id = id;
+    public Cart(int userId, int productId, int quantity) {
         this.userId = userId;
         this.productId = productId;
         this.quantity = quantity;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getUserId() {

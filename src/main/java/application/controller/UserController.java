@@ -3,42 +3,51 @@ package application.controller;
 import application.exception.AppException;
 import application.model.HttpResponse;
 import application.model.User;
+import application.model.UserLoginObject;
 import application.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import static application.model.Constants.*;
 
 @RestController
+@Validated
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
     UserService userService;
 
-    @RequestMapping(value="/login")
-    public User loginUser(@RequestBody User user) throws AppException {
-        User signedInUser = userService.getSignInUser(user.getEmail(), user.getPassword());
-        if(signedInUser != null){
-            return signedInUser;
-        }
-        throw new AppException(CODE_INVALID, MESSAGE_INVALID_LOGIN);
+    @GetMapping("/login")
+    public User loginUser(@RequestBody UserLoginObject user) throws AppException {
+        return userService.getSignInUser(user.getEmail(), user.getPassword());
+
     }
 
-    @RequestMapping(value="/add",method = RequestMethod.POST)
-    public User addUser(@RequestBody User user){
+    @PostMapping("/add")
+    public User addUser(@Valid @RequestBody User user){
         return userService.addUser(user);
     }
 
-    @RequestMapping(value="/update/id={id}",method = RequestMethod.PUT)
-    public HttpResponse updateUser(@PathVariable Integer id, @RequestBody User user){
+    @PutMapping("/update/id={id}")
+    public void updateUser(@RequestHeader(HEADER_USER_ID) Integer tokenId, @PathVariable @NotNull Integer id, @Valid @RequestBody User user) throws AppException {
+        if(!tokenId.equals(id))
+            throw new AppException(HttpStatus.UNAUTHORIZED, MESSAGE_UNAUTHORISED);
         user.setId(id);
-        return userService.updateUser(user);
+        userService.updateUser(user);
     }
 
-    @RequestMapping(value="/delete/id={id}",method = RequestMethod.DELETE)
-    public HttpResponse deleteUser(@PathVariable Integer id){
-        return userService.deleteUser(id);
+    @DeleteMapping("/delete/id={id}")
+    public void deleteUser(@RequestHeader(HEADER_USER_ID) Integer tokenId, @PathVariable @NotNull Integer id){
+        if(!tokenId.equals(id))
+            throw new AppException(HttpStatus.UNAUTHORIZED, MESSAGE_UNAUTHORISED);
+        userService.deleteUser(id);
     }
 
 }

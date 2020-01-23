@@ -1,17 +1,19 @@
 package application.exception;
 
+import org.springframework.http.HttpStatus;
+
 public class AppException extends RuntimeException {
-    private int statusCode;
-    public AppException(int statusCode, String message){
+    private HttpStatus httpStatus;
+    public AppException(HttpStatus httpStatus, String message){
         super(message);
-        this.statusCode = statusCode;
+        this.httpStatus = httpStatus;
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
+    public void setHttpStatus(HttpStatus httpStatus) {
+        this.httpStatus = httpStatus;
     }
 }

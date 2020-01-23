@@ -1,16 +1,30 @@
 package application.model;
 
+import javax.validation.constraints.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static application.dao.SqlConstants.*;
+import static application.model.Constants.REGEX_VALID_NAME;
 
 public class User {
     private Integer id;
+    @NotNull
+    @NotBlank
     private String password;
+    @NotNull
+    @NotBlank
+    @Pattern(regexp = REGEX_VALID_NAME)
     private String name;
+    @NotNull
+    @Email
     private String email;
+    @NotNull
+    @NotBlank
     private String address;
+    @NotNull
+    @Min(1000000000)
+    @Max(value = 9999999999L)
     private Long phone;
 
     public User(){
@@ -24,14 +38,6 @@ public class User {
         this.email = email;
         this.address = address;
         this.phone = phone;
-    }
-    public User(ResultSet resultSet) throws SQLException {
-        this.id = resultSet.getInt(COLUMN_USER_ID);
-        this.password = resultSet.getString(COLUMN_USER_PASSWORD);
-        this.name = resultSet.getString(COLUMN_USER_NAME);
-        this.email = resultSet.getString(COLUMN_USER_EMAIL);
-        this.address = resultSet.getString(COLUMN_USER_ADDRESS);
-        this.phone = resultSet.getLong(COLUMN_USER_PHONE);
     }
 
     public Integer getId() {

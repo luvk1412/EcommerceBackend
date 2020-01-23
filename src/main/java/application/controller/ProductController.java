@@ -4,39 +4,39 @@ import application.model.HttpResponse;
 import application.model.Product;
 import application.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/product")
 public class ProductController {
     @Autowired
     ProductService productService;
 
-    @RequestMapping(value="/add",method = RequestMethod.POST)
-    public Product addProduct(@RequestBody Product product){
+    @PostMapping("/add")
+    public Product addProduct(@Valid @RequestBody Product product){
         return productService.addProduct(product);
     }
 
-    @RequestMapping(value="/update/id={id}", method = RequestMethod.PUT)
-    public HttpResponse updateProduct(@PathVariable Integer id, @RequestBody Product product){
+    @PutMapping("/update/id={id}")
+    public void updateProduct(@PathVariable @NotNull Integer id, @Valid @RequestBody Product product){
         product.setId(id);
-        return productService.updateProduct(product);
+        productService.updateProduct(product);
     }
 
-    @RequestMapping(value="/quantity/update/id={id}&quantity={quantity}",method = RequestMethod.PUT)
-    public HttpResponse updateProductQuantity(@PathVariable Integer id, @PathVariable Integer quantity){
-        return productService.updateProductQuantity(id, quantity);
-    }
-
-    @RequestMapping(value="/search/{filter}/prefix={prefix}/page={pageNumber}&limit={limit}", method = RequestMethod.GET)
-    public List<Product> searchProducts(@PathVariable String filter, @PathVariable String prefix, @PathVariable int pageNumber, @PathVariable int limit){
+    @PutMapping("/search/{filter}/prefix={prefix}/page={pageNumber}&limit={limit}")
+    public List<Product> searchProducts(@PathVariable @NotNull String filter, @PathVariable String prefix, @PathVariable @NotNull @Min(1) Integer pageNumber, @PathVariable @NotNull @Min(1) Integer limit){
         return productService.searchProducts(filter, prefix, pageNumber, limit);
     }
 
-    @RequestMapping(value="/delete/id={id}",method = RequestMethod.DELETE)
-    public HttpResponse deleteProduct(@PathVariable Integer id){
-        return productService.deleteProduct(id);
+    @DeleteMapping(value="/delete/id={id}")
+    public void deleteProduct(@PathVariable @NotNull Integer id){
+        productService.deleteProduct(id);
     }
 }

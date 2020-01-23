@@ -1,12 +1,14 @@
 package application.dao;
 
 import application.model.Cart;
+import application.model.CartForOrder;
 import application.model.CartReturnObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
@@ -22,32 +24,59 @@ public class CartRepository {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public Cart addToCart(Cart cart) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        namedParameterJdbcTemplate.update(QUERY_CART_ADD, getCartMap(cart), keyHolder);
-        cart.setId(keyHolder.getKey().intValue());
-        return cart;
+    public void addToCart(Cart cart) {
+        try{
+            namedParameterJdbcTemplate.update(QUERY_CART_ADD, getCartMap(cart));
+        }
+        catch (DuplicateKeyException ex){
+            updateCartQuantity(cart.getUserId(), cart.getProductId(), cart.getQuantity());
+        }
     }
 
     public List<CartReturnObject> getCartForUser(Integer userId) {
-        return namedParameterJdbcTemplate.query(QUERY_CART_GET, getCartMapUserId(userId), new RowMapper<CartReturnObject>() {
+        return namedParameterJdbcTemplate.query(QUERY_CART_GET_JOIN, getCartMapUserId(userId), new RowMapper<CartReturnObject>() {
             @Override
             public CartReturnObject mapRow(ResultSet resultSet, int i) throws SQLException {
-                return new CartReturnObject(resultSet);
+                return getCartReturnObjectFromResultSet(resultSet);
             }
         });
     }
 
-    public void deleteCartItem(int id) {
-        namedParameterJdbcTemplate.update(QUERY_CART_DELETE, getCartMap(id));
+    public List<CartForOrder> getCartForOrder(int userId){
+        return namedParameterJdbcTemplate.query(QUERY_CART_GET_JOIN_FOR_ORDER, getCartMapUserId(userId), new BeanPropertyRowMapper<>(CartForOrder.class));
     }
 
-    public int getCountForId(Integer id) {
-        return namedParameterJdbcTemplate.queryForObject(QUERY_CART_USER_ID_COUNT, getCartMap(id), new RowMapper<Integer>() {
+
+    public int updateCartQuantity(int userId, int productId, int quantity) {
+        return namedParameterJdbcTemplate.update(QUERY_CART_UPDATE_QUANTITY, getCartMap(userId, productId, quantity));
+    }
+
+    public int updateProductAfterOrder(int userId){
+        return namedParameterJdbcTemplate.update(QUERY_PRODUCT_UPDATE_AFTER_ORDER, getCartMapUserId(userId));
+    }
+
+    public int deleteCartItem(int userId, int productId) {
+        return namedParameterJdbcTemplate.update(QUERY_CART_DELETE, getCartMap(userId, productId));
+    }
+    public int deleteCartItemForUser(int userId) {
+        return namedParameterJdbcTemplate.update(QUERY_CART_DELETE_FOR_USER, getCartMapUserId(userId));
+    }
+
+
+    public List<Cart> getAll() {
+        return namedParameterJdbcTemplate.query(QUERY_CART_GET_ALL, new RowMapper<Cart>() {
             @Override
-            public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
-                return resultSet.getInt(COLUMN_GENERAL_COUNT);
+            public Cart mapRow(ResultSet resultSet, int i) throws SQLException {
+                return getCartFromResultSet(resultSet);
             }
         });
+    }
+
+    public int getQuantityForCart(int userId, int productId){
+        try{
+            return namedParameterJdbcTemplate.queryForObject(QUERY_CART_QUANTITY, getCartMap(userId, productId), Integer.class);
+        }catch (EmptyResultDataAccessException ex){
+            return 0;
+        }
     }
 }

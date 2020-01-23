@@ -1,5 +1,7 @@
 package application.model;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -7,11 +9,21 @@ import static application.dao.SqlConstants.*;
 
 public class Product {
     private Integer id;
+    @NotNull
+    @NotBlank
     private String name;
+    @NotNull
+    @NotBlank
     private String category;
+    @NotNull
+    @NotBlank
     private String description;
+    @NotNull
     private Integer price;
+    @NotNull
+    @NotBlank
     private String currency;
+    @NotNull
     private Integer quantity;
 
     public Product(){
@@ -27,17 +39,6 @@ public class Product {
         this.currency = currency;
         this.quantity = quantity;
     }
-
-    public Product(ResultSet resultSet) throws SQLException {
-        this.id = resultSet.getInt(COLUMN_PRODUCT_ID);
-        this.name = resultSet.getString(COLUMN_PRODUCT_NAME);
-        this.category = resultSet.getString(COLUMN_PRODUCT_CATEGORY);
-        this.description = resultSet.getString(COLUMN_PRODUCT_DESCRIPTION);
-        this.price = resultSet.getInt(COLUMN_PRODUCT_PRICE);
-        this.currency = resultSet.getString(COLUMN_PRODUCT_CURRENCY);
-        this.quantity = resultSet.getInt(COLUMN_PRODUCT_QUANTITY);
-    }
-
 
     public Integer getId() {
         return id;
