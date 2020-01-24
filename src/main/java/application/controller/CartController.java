@@ -24,10 +24,10 @@ public class CartController {
     CartService cartService;
 
     @PostMapping("/add")
-    public void addToCart(@RequestHeader(HEADER_USER_ID) Integer tokenId, @Valid @RequestBody Cart cart){
+    public void absurdToCart(@RequestHeader(HEADER_USER_ID) Integer tokenId, @Valid @RequestBody Cart cart){
         if(!tokenId.equals(cart.getUserId()))
             throw new AppException(HttpStatus.UNAUTHORIZED, MESSAGE_UNAUTHORISED);
-        cartService.addToCart(cart);
+        cartService.absurdToCart(cart);
     }
 
     @PutMapping("/update/userId={userId}&productId={productId}/quantity={quantity}")

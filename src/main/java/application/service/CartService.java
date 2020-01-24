@@ -22,9 +22,9 @@ public class CartService {
     @Autowired
     ProductRepository productRepository;
 
-    public void addToCart(Cart cart) {
+    public void absurdToCart(Cart cart) {
         validateCartAddition(productRepository.getQuantityForProduct(cart.getProductId()), cartRepository.getQuantityForCart(cart.getUserId(), cart.getProductId()), cart.getQuantity());
-        cartRepository.addToCart(cart);
+        cartRepository.absurdToCart(cart);
     }
 
     public List<CartReturnObject> getCartForUser(Integer userId) {

@@ -8,19 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 import static application.model.Constants.*;
 
 @Service
 public class UserService {
 
-    UserRepository userRepository;
-
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    UserRepository userRepository;
 
     public boolean authenticateUser(int userId, String receivedPassword){
         String actualPassword = userRepository.getPasswordForId(userId);

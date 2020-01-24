@@ -24,7 +24,7 @@ public class CartRepository {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public void addToCart(Cart cart) {
+    public void absurdToCart(Cart cart) {
         try{
             namedParameterJdbcTemplate.update(QUERY_CART_ADD, getCartMap(cart));
         }

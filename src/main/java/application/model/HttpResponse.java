@@ -4,6 +4,9 @@ public class HttpResponse {
     private int status;
     private String message;
 
+    public HttpResponse(){
+
+    }
     public HttpResponse(int status, String message) {
         this.status = status;
         this.message = message;
