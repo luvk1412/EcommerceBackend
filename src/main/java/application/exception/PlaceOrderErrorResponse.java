@@ -5,6 +5,10 @@ import java.util.List;
 public class PlaceOrderErrorResponse {
     List<InsufficientProduct> insufficientProducts;
 
+    public PlaceOrderErrorResponse(){
+
+    }
+
     public PlaceOrderErrorResponse(List<InsufficientProduct> insufficientProducts) {
         this.insufficientProducts = insufficientProducts;
     }

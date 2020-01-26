@@ -4,6 +4,7 @@ public class InsufficientProduct {
     private int productId;
     private String productName;
 
+    public InsufficientProduct(){}
     public InsufficientProduct(int productId, String productName) {
         this.productId = productId;
         this.productName = productName;
