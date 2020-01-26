@@ -3,6 +3,9 @@ package application.dao;
 import application.exception.AppException;
 import application.model.OrderProductDescription;
 import application.model.Product;
+import application.model.ProductUpdateObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -23,7 +26,7 @@ import static application.model.Constants.MESSAGE_INVALID_PRODUCT_ID;
 public class ProductRepository {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductRepository.class);
     public Product addProduct(Product product){
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(QUERY_PRODUCT_ADD, getProductMap(product), keyHolder);
@@ -31,8 +34,13 @@ public class ProductRepository {
         return product;
     }
 
-    public int updateProduct(Product product) {
-        return namedParameterJdbcTemplate.update(QUERY_PRODUCT_UPDATE, getProductMap(product));
+    public int updateProduct(ProductUpdateObject product) {
+        try {
+            return namedParameterJdbcTemplate.update(product.getUpdateQuery(), getProductMap(product));
+        }catch (IllegalAccessException ex){
+            LOGGER.info("IllegalAccessException while updating Product with id {}", product.getId());
+            throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        }
     }
 
     public void updateProductQuantityForCancelOrder(List<OrderProductDescription> orderProductDescriptions) {
@@ -60,6 +68,7 @@ public class ProductRepository {
         try {
             return namedParameterJdbcTemplate.queryForObject(QUERY_PRODUCT_QUANTITY, getProductMap(productId), Integer.class);
         }catch (EmptyResultDataAccessException ex){
+            LOGGER.info("Product with ID : {} not found", productId);
             throw new AppException(HttpStatus.NOT_FOUND, MESSAGE_INVALID_PRODUCT_ID);
         }
     }

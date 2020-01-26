@@ -3,6 +3,8 @@ package application.dao;
 import application.model.Cart;
 import application.model.CartForOrder;
 import application.model.CartReturnObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -24,11 +26,14 @@ public class CartRepository {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public void absurdToCart(Cart cart) {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CartRepository.class);
+
+    public void upsertToCart(Cart cart) {
         try{
             namedParameterJdbcTemplate.update(QUERY_CART_ADD, getCartMap(cart));
         }
         catch (DuplicateKeyException ex){
+            LOGGER.info("Product with ID : {} already exists in User Cart, Updating the quantity", cart.getProductId());
             updateCartQuantity(cart.getUserId(), cart.getProductId(), cart.getQuantity());
         }
     }
@@ -76,6 +81,7 @@ public class CartRepository {
         try{
             return namedParameterJdbcTemplate.queryForObject(QUERY_CART_QUANTITY, getCartMap(userId, productId), Integer.class);
         }catch (EmptyResultDataAccessException ex){
+            LOGGER.info("Product wth ID : {} not found in Cart for UserId : {}, returning 0", productId, userId);
             return 0;
         }
     }

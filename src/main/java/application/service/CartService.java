@@ -22,26 +22,19 @@ public class CartService {
     @Autowired
     ProductRepository productRepository;
 
-    public void absurdToCart(Cart cart) {
-        validateCartAddition(productRepository.getQuantityForProduct(cart.getProductId()), cartRepository.getQuantityForCart(cart.getUserId(), cart.getProductId()), cart.getQuantity());
-        cartRepository.absurdToCart(cart);
+    public void upsertToCart(Cart cart) {
+        int cartQuantity = cartRepository.getQuantityForCart(cart.getUserId(), cart.getProductId());
+        int productQuantity = productRepository.getQuantityForProduct(cart.getProductId());
+        validateCartAddition(productQuantity, cartQuantity, cart.getQuantity());
+        validateCartRemoval(cartQuantity, cart.getQuantity());
+        if(cartQuantity + cart.getQuantity() == 0)
+            deleteProductFromCart(cart.getUserId(), cart.getProductId());
+        else
+            cartRepository.upsertToCart(cart);
     }
 
     public List<CartReturnObject> getCartForUser(Integer userId) {
         return cartRepository.getCartForUser(userId);
-    }
-
-    public void updateCartQuantity(int userId, int productId, int quantity) {
-        int cartQuantity = cartRepository.getQuantityForCart(userId, productId);
-        int productQuantity = productRepository.getQuantityForProduct(productId);
-        validateCartAddition(productQuantity, cartQuantity, quantity);
-        validateCartRemoval(cartQuantity, quantity);
-        if(cartQuantity + quantity == 0)
-            deleteProductFromCart(userId, productId);
-        else
-            if(cartRepository.updateCartQuantity(userId, productId, quantity) == 0){
-                throw new AppException(HttpStatus.BAD_REQUEST, MESSAGE_INVALID_CART_ITEM);
-            }
     }
 
     public void deleteProductFromCart(int userId, int productId) {

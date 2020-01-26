@@ -40,7 +40,8 @@ public class Constants {
     public static final String REGEX_VALID_NAME = "(^[A-Za-z]+[A-Za-z .]*[A-Za-z]+$)|(^[A-Za-z]+$)";
     public static final String REGEX_VALID_EMAIL = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
     public static final String REGEX_VALID_PHONE = "[0-9]{10}";
-    public static final String REGEX_VALID_NON_EMPTY = ".+";
+    public static final String REGEX_VALID_NON_EMPTY = ".*\\S.*";
+
 
     public static final String FILTER_SEARCH_PRODUCT_ALL = "all";
 

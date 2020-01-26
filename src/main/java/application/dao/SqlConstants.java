@@ -1,6 +1,9 @@
 package application.dao;
 
 public interface SqlConstants {
+    String TABLE_USER = "user";
+    String TABLE_PRODUCT = "product";
+
     String QUERY_USER_GET_ALL = "SELECT * FROM user";
     String QUERY_USER_GET_PASSWORD_BY_ID = "SELECT password FROM user WHERE id = :id";
     String QUERY_USER_GET_BY_EMAIL = "SELECT * FROM user WHERE email = :email";
@@ -31,6 +34,16 @@ public interface SqlConstants {
     String QUERY_ORDER_GET_BY_ORDER_ID = "SELECT * FROM orderItem WHERE orderId = :orderId";
     String QUERY_ORDER_ADD = "INSERT INTO orderItem (userId, orderDescription, amount, currency) VALUES (:userId , :orderDescription, :amount, :currency)";
     String QUERY_ORDER_DELETE = "DELETE FROM orderItem WHERE (orderId = :orderId)";
+
+    String QUERY_BUILDER_UPDATE = "UPDATE table SET fields WHERE id=:id";
+    String QUERY_BUILDER_ATTRIBUTE_TABLE = "table";
+    String QUERY_BUILDER_ATTRIBUTE_FIELD = "field";
+    String QUERY_BUILDER_ATTRIBUTE_FIELDS = "fields";
+    String QUERY_BUILDER_SET_START = "field = :field";
+    String QUERY_BUILDER_SET = ",field = :field";
+    String QUERY_BUILDER_SET_UPDATE_START = "field = field + :field";
+    String QUERY_BUILDER_SET_UPDATE = ",field = field + :field";
+
 
     String COLUMN_USER_ID = "id";
     String COLUMN_USER_NAME = "name";

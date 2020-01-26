@@ -3,6 +3,7 @@ package application.service;
 import application.dao.ProductRepository;
 import application.exception.AppException;
 import application.model.Product;
+import application.model.ProductUpdateObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class ProductService {
         return product;
     }
 
-    public void updateProduct(Product product) {
+    public void updateProduct(ProductUpdateObject product) {
         if(productRepository.getQuantityForProduct(product.getId()) + product.getQuantity() < 0){
             throw new AppException(HttpStatus.BAD_REQUEST, MESSAGE_EXCEEDED_PRODUCT_DEC);
         }

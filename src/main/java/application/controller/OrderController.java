@@ -24,26 +24,20 @@ public class OrderController {
     @Autowired
     OrderService orderService;
 
-    @GetMapping(value="/all/userId={userId}")
-    public List<Order> getOrdersForUser(@RequestHeader(HEADER_USER_ID) Integer tokenId, @PathVariable @NotNull Integer userId){
-        if(!tokenId.equals(userId))
-            throw new AppException(HttpStatus.UNAUTHORIZED, MESSAGE_UNAUTHORISED);
+    @GetMapping(value="/all")
+    public List<Order> getOrdersForUser(@RequestHeader(HEADER_USER_ID) Integer userId){
         return orderService.getOrders(userId);
     }
 
-    @PostMapping(value="/checkout/userId={userId}")
-    public void placeOrder(@RequestHeader(HEADER_USER_ID) Integer tokenId, @PathVariable @NotNull Integer userId) throws JsonProcessingException {
-        if(!tokenId.equals(userId))
-            throw new AppException(HttpStatus.UNAUTHORIZED, MESSAGE_UNAUTHORISED);
+    @PostMapping(value="/checkout")
+    public void placeOrder(@RequestHeader(HEADER_USER_ID) Integer userId) throws JsonProcessingException {
         orderService.placeOrder(userId);
     }
 
 
 
-    @DeleteMapping(value="/cancel/userId={userId}&orderId={orderId}")
-    public void cancelOrder(@RequestHeader(HEADER_USER_ID) Integer tokenId, @PathVariable @NotNull Integer userId, @PathVariable @NotNull Integer orderId){
-        if(!tokenId.equals(userId))
-            throw new AppException(HttpStatus.UNAUTHORIZED, MESSAGE_UNAUTHORISED);
+    @DeleteMapping(value="/cancel/orderId={orderId}")
+    public void cancelOrder(@PathVariable @NotNull Integer orderId){
         orderService.cancelOrder(orderId);
     }
 }

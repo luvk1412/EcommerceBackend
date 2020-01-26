@@ -2,6 +2,7 @@ package application.dao;
 
 import application.exception.AppException;
 import application.model.User;
+import application.model.UserUpdateObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,11 +22,15 @@ import static application.dao.Mappers.getUserFromResultSet;
 import static application.dao.Mappers.getUserMap;
 import static application.dao.SqlConstants.*;
 import static application.model.Constants.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Repository
 public class UserRepository {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
 
     public List<User> getAllUsers(){
         return namedParameterJdbcTemplate.query(QUERY_USER_GET_ALL, new RowMapper<User>() {
@@ -39,6 +44,7 @@ public class UserRepository {
         try {
             return namedParameterJdbcTemplate.queryForObject(QUERY_USER_GET_PASSWORD_BY_ID, getUserMap(id), String.class);
         }catch (EmptyResultDataAccessException ex){
+            LOGGER.info("User with ID : {} not found", id);
             throw new AppException(HttpStatus.NOT_FOUND, MESSAGE_INVALID_USER_ID);
         }
     }
@@ -53,6 +59,7 @@ public class UserRepository {
             });
         }
         catch (EmptyResultDataAccessException ex){
+            LOGGER.info("User with email : {} not found", email);
             throw new AppException(HttpStatus.NOT_FOUND, MESSAGE_INVALID_EMAIL);
         }
     }
@@ -63,17 +70,23 @@ public class UserRepository {
         try {
             namedParameterJdbcTemplate.update(QUERY_USER_ADD, getUserMap(user), keyHolder);
         } catch (DuplicateKeyException ex){
+            LOGGER.info("User with the given EMAIL : {} already exists", user.getEmail());
             throw new AppException(HttpStatus.BAD_REQUEST, MESSAGE_DUPLICATE_EMAIL);
         }
         user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         return user;
     }
 
-    public void updateUser(User user) {
+    public void updateUser(UserUpdateObject userUpdateObject) {
         try {
-            namedParameterJdbcTemplate.update(QUERY_USER_UPDATE, getUserMap(user));
+            namedParameterJdbcTemplate.update(userUpdateObject.getUpdateQuery(), getUserMap(userUpdateObject));
         } catch (DuplicateKeyException ex){
+            LOGGER.info("User with the given EMAIL : {} already exists", userUpdateObject.getEmail());
             throw new AppException(HttpStatus.BAD_REQUEST, MESSAGE_DUPLICATE_EMAIL);
+        }
+        catch (IllegalAccessException ex){
+            LOGGER.info("IllegalAccessException while updating User with id {}", userUpdateObject.getId());
+            throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
         }
     }
 

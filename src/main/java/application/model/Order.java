@@ -14,6 +14,15 @@ public class Order {
 
     }
 
+    public Order(int orderId, int userId, int amount, String currency, Timestamp dateCreated, List<OrderProductDescription> orderProductDescriptions) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.amount = amount;
+        this.currency = currency;
+        this.dateCreated = dateCreated;
+        this.orderProductDescriptions = orderProductDescriptions;
+    }
+
     public int getOrderId() {
         return orderId;
     }

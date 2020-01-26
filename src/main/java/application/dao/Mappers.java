@@ -21,6 +21,14 @@ public class Mappers {
                 .addValue(COLUMN_USER_ADDRESS, user.getAddress())
                 .addValue(COLUMN_USER_PHONE, user.getPhone());
     }
+    public static MapSqlParameterSource getUserMap(UserUpdateObject userUpdateObject){
+        return new MapSqlParameterSource(COLUMN_USER_ID, userUpdateObject.getId())
+                .addValue(COLUMN_USER_NAME, userUpdateObject.getName())
+                .addValue(COLUMN_USER_PASSWORD,userUpdateObject.getPassword())
+                .addValue(COLUMN_USER_EMAIL,userUpdateObject.getEmail())
+                .addValue(COLUMN_USER_ADDRESS, userUpdateObject.getAddress())
+                .addValue(COLUMN_USER_PHONE, userUpdateObject.getPhone());
+    }
     public static MapSqlParameterSource getUserMap(int id){
         return new MapSqlParameterSource(COLUMN_USER_ID, id);
     }
@@ -29,6 +37,15 @@ public class Mappers {
     }
 
     public static MapSqlParameterSource getProductMap(Product product){
+        return new MapSqlParameterSource(COLUMN_PRODUCT_ID, product.getId())
+                .addValue(COLUMN_PRODUCT_NAME, product.getName())
+                .addValue(COLUMN_PRODUCT_CATEGORY,product.getCategory())
+                .addValue(COLUMN_PRODUCT_CURRENCY,product.getCurrency())
+                .addValue(COLUMN_PRODUCT_DESCRIPTION, product.getDescription())
+                .addValue(COLUMN_PRODUCT_PRICE, product.getPrice())
+                .addValue(COLUMN_PRODUCT_QUANTITY, product.getQuantity());
+    }
+    public static MapSqlParameterSource getProductMap(ProductUpdateObject product){
         return new MapSqlParameterSource(COLUMN_PRODUCT_ID, product.getId())
                 .addValue(COLUMN_PRODUCT_NAME, product.getName())
                 .addValue(COLUMN_PRODUCT_CATEGORY,product.getCategory())

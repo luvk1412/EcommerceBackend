@@ -3,6 +3,8 @@ package application.dao;
 import application.exception.AppException;
 import application.model.Order;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -21,11 +23,14 @@ public class OrderRepository {
     @Autowired
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderRepository.class);
+
     public List<Order> getAllOrdersForUser(int userId){
         return namedParameterJdbcTemplate.query(QUERY_ORDER_GET_BY_USER_ID, getOrderMapUserId(userId), (resultSet, i) -> {
             try {
                 return getOrderFromResultSet(resultSet);
             } catch (JsonProcessingException e) {
+                LOGGER.info("Json Parsing error for request for used ID : {}", userId);
                 throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
             }
         });
@@ -37,6 +42,7 @@ public class OrderRepository {
                 try {
                     return getOrderFromResultSet(resultSet);
                 } catch (JsonProcessingException e) {
+                    LOGGER.info("Json Parsing error for request for order ID : {}", orderId);
                     throw new AppException(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.toString());
                 }
             });

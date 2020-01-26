@@ -1,21 +1,16 @@
 package application.model;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import static application.dao.SqlConstants.*;
 
 public class Cart {
-    @NotNull
     private Integer userId;
 
     @NotNull
     private Integer productId;
 
     @NotNull
-    @Min(1)
     private Integer quantity;
 
     public Cart(){

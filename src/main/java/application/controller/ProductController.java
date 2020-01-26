@@ -2,6 +2,7 @@ package application.controller;
 
 import application.model.HttpResponse;
 import application.model.Product;
+import application.model.ProductUpdateObject;
 import application.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,12 +26,12 @@ public class ProductController {
     }
 
     @PutMapping("/update/id={id}")
-    public void updateProduct(@PathVariable @NotNull Integer id, @Valid @RequestBody Product product){
+    public void updateProduct(@PathVariable @NotNull Integer id, @Valid @RequestBody ProductUpdateObject product){
         product.setId(id);
         productService.updateProduct(product);
     }
 
-    @PutMapping("/search/{filter}/prefix={prefix}/page={pageNumber}&limit={limit}")
+    @GetMapping("/search/{filter}/prefix={prefix}/page={pageNumber}&limit={limit}")
     public List<Product> searchProducts(@PathVariable @NotNull String filter, @PathVariable String prefix, @PathVariable @NotNull @Min(1) Integer pageNumber, @PathVariable @NotNull @Min(1) Integer limit){
         return productService.searchProducts(filter, prefix, pageNumber, limit);
     }

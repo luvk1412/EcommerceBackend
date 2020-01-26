@@ -1,5 +1,6 @@
 package application.model;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
@@ -19,6 +20,7 @@ public class Product {
     @NotBlank
     private String description;
     @NotNull
+    @Min(0)
     private Integer price;
     @NotNull
     @NotBlank
